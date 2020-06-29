@@ -64,5 +64,15 @@ describe('post routes for post model', () => {
         });
       });
   });
+  it('deletes a post by ID via PATCH', async() => {
+    const loggedInUser = await getLoggedInUser();
+    const post = prepare(await Post.findOne({ user: loggedInUser._id }));
+    
+    return agent
+      .delete(`/api/v1/posts/${post._id}`)
+      .then(res => {
+        expect(res.body).toEqual(post);
+      });
+  });
 
 });

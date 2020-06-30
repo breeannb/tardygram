@@ -29,7 +29,6 @@ describe('post routes for post model', () => {
   });
 
   it('gets all posts', async() => {
-    
     const posts = prepare(await Post.find());
     
     return agent
@@ -39,18 +38,13 @@ describe('post routes for post model', () => {
       });
   });
 
-  it('updates caption by ID via PATCH', async() => {
-    const loggedInUser = await getLoggedInUser();
-    const post = prepare(await Post.findOne({ user: loggedInUser._id }));
-    
+  it('gets the 10 most popular posts', async() => {
+    const posts = prepare(await Post.popular());
+
     return agent
-      .patch(`/api/v1/posts/${post._id}`)
-      .send({ caption: 'new caption' })
+      .get('/api/v1/posts/popular')
       .then(res => {
-        expect(res.body).toEqual({
-          ...post,
-          caption:'new caption'
-        });
+        expect(res.body).toEqual(posts);
       });
   });
 
@@ -65,9 +59,32 @@ describe('post routes for post model', () => {
       });
   });
 
-  it('deletes a post by ID via PATCH', async() => {
+  it('updates caption by ID via PATCH', async() => {
     const loggedInUser = await getLoggedInUser();
-    const post = prepare(await Post.findOne({ user: loggedInUser._id }));
+    const post = prepare(await Post.create({ 
+      user: loggedInUser._id, 
+      photoUrl: 'whatever@url.com',
+      caption: 'this is a caption',
+      tags: ['string one', 'string 2', 'rad'] }));
+    
+    return agent
+      .patch(`/api/v1/posts/${post._id}`)
+      .send({ caption: 'new caption' })
+      .then(res => {
+        expect(res.body).toEqual({
+          ...post,
+          caption:'new caption'
+        });
+      });
+  });
+
+  it('deletes a post by ID via DELETE', async() => {
+    const loggedInUser = await getLoggedInUser();
+    const post = prepare(await Post.create({ 
+      user: loggedInUser._id, 
+      photoUrl: 'whatever@url.com',
+      caption: 'this is a caption',
+      tags: ['string one', 'string 2', 'rad'] }));
     
     return agent
       .delete(`/api/v1/posts/${post._id}`)

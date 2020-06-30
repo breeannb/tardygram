@@ -25,7 +25,13 @@ describe('comments routes', () => {
   });
   it('deletes a comment by id', async() => {
     const loggedInUser = await getLoggedInUser();
-    const post = prepare(await Post.findOne({ user: loggedInUser._id }));
+
+    const post = prepare(await Post.create({ 
+      user: loggedInUser._id, 
+      photoUrl: 'whatever@url.com',
+      caption: 'this is a caption',
+      tags: ['string one', 'string 2', 'rad'] }));
+
     const comment = prepare(await Comment.create({ commentBy: loggedInUser._id, post: post._id, comment: 'here is a comment' }));
 
     return agent

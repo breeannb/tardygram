@@ -9,7 +9,7 @@ const seed = require('./seed');
 const request = require('supertest');
 const app = require('../lib/app');
 const User = require('../lib/models/User');
-const Post = require('../lib/models/Post');
+// const Post = require('../lib/models/Post');
 
 beforeAll(async() => {
   const uri = await mongod.getUri();

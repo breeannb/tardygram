@@ -39,17 +39,6 @@ describe('post routes for post model', () => {
       });
   });
 
-  it('gets post by ID via GET', async() => {
-    
-    const post = prepare(await Post.findOne());
-    
-    return agent
-      .get(`/api/v1/posts/${post._id}`)
-      .then(res => {
-        expect(res.body).toEqual(post);
-      });
-  });
-
   it('updates caption by ID via PATCH', async() => {
     const loggedInUser = await getLoggedInUser();
     const post = prepare(await Post.findOne({ user: loggedInUser._id }));
@@ -64,6 +53,18 @@ describe('post routes for post model', () => {
         });
       });
   });
+
+  it('gets post by ID via GET', async() => {
+    
+    const post = prepare(await Post.findOne().populate('user', { username: true }).populate('comments.commentBy'));
+    
+    return agent
+      .get(`/api/v1/posts/${post._id}`)
+      .then(res => {
+        expect(res.body).toEqual(post);
+      });
+  });
+
   it('deletes a post by ID via PATCH', async() => {
     const loggedInUser = await getLoggedInUser();
     const post = prepare(await Post.findOne({ user: loggedInUser._id }));

@@ -5,7 +5,11 @@ const Comment = require('../lib/models/Comment');
 describe('comments routes', () => {
   it('creates a comment with POST', async() => {
     const loggedInUser = await getLoggedInUser();
-    const createdPost = await Post.findOne({ user: loggedInUser._id });
+    const createdPost = await Post.create({
+      user: loggedInUser._id,
+      photoUrl: 'whatever@url.com',
+      caption: 'this is a caption',
+      tags: ['string one', 'string 2', 'rad'] });
 
     return agent
       .post('/api/v1/comments')
@@ -26,8 +30,8 @@ describe('comments routes', () => {
   it('deletes a comment by id', async() => {
     const loggedInUser = await getLoggedInUser();
 
-    const post = prepare(await Post.create({ 
-      user: loggedInUser._id, 
+    const post = prepare(await Post.create({
+      user: loggedInUser._id,
       photoUrl: 'whatever@url.com',
       caption: 'this is a caption',
       tags: ['string one', 'string 2', 'rad'] }));

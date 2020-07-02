@@ -1,5 +1,3 @@
-const request = require('supertest');
-const app = require('../lib/app');
 const { agent, getLoggedInUser, prepare } = require('../database/data-helpers');
 const Post = require('../lib/models/Post');
 
@@ -9,7 +7,7 @@ describe('post routes for post model', () => {
 
   it('creates a post', async() => {
     const loggedInUser = await getLoggedInUser();
-    
+
     return agent
       .post('/api/v1/posts')
       .send({
@@ -30,7 +28,7 @@ describe('post routes for post model', () => {
 
   it('gets all posts', async() => {
     const posts = prepare(await Post.find());
-    
+
     return agent
       .get('/api/v1/posts')
       .then(res => {
@@ -49,9 +47,9 @@ describe('post routes for post model', () => {
   });
 
   it('gets post by ID via GET', async() => {
-    
+
     const post = prepare(await Post.findOne().populate('user', { username: true }).populate('comments.commentBy'));
-    
+
     return agent
       .get(`/api/v1/posts/${post._id}`)
       .then(res => {
@@ -61,12 +59,12 @@ describe('post routes for post model', () => {
 
   it('updates caption by ID via PATCH', async() => {
     const loggedInUser = await getLoggedInUser();
-    const post = prepare(await Post.create({ 
-      user: loggedInUser._id, 
+    const post = prepare(await Post.create({
+      user: loggedInUser._id,
       photoUrl: 'whatever@url.com',
       caption: 'this is a caption',
       tags: ['string one', 'string 2', 'rad'] }));
-    
+
     return agent
       .patch(`/api/v1/posts/${post._id}`)
       .send({ caption: 'new caption' })
@@ -80,12 +78,12 @@ describe('post routes for post model', () => {
 
   it('deletes a post by ID via DELETE', async() => {
     const loggedInUser = await getLoggedInUser();
-    const post = prepare(await Post.create({ 
-      user: loggedInUser._id, 
+    const post = prepare(await Post.create({
+      user: loggedInUser._id,
       photoUrl: 'whatever@url.com',
       caption: 'this is a caption',
       tags: ['string one', 'string 2', 'rad'] }));
-    
+
     return agent
       .delete(`/api/v1/posts/${post._id}`)
       .then(res => {
